@@ -1,0 +1,3 @@
+org: your_org
+role: your_role
+jwtSecret: your_jwt_secret

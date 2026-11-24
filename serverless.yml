@@ -1,20 +1,76 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: pjstrid
-# "service" is the name of this project. This will also be added to your AWS resource names.
+# Your own Serverless org, read from config.yml (not committed - copy config.example.yml).
+org: ${file(./config.yml):org}
+# Used in the names of the Lambdas and the stack in AWS.
 service: shui-rest-api
 
 provider:
   name: aws
   runtime: nodejs24.x
   architecture: arm64
-  # Uncomment to easily set up a custom domain. Read the docs for more details:
-  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
-  # domain: api.example.com
+  region: eu-north-1
+  iam:
+    role: ${file(./config.yml):role}
+  environment:
+    JWT_SECRET: ${file(./config.yml):jwtSecret}
+
 
 functions:
-  hello:
-    handler: handler.hello
+  # Auth
+  register:
+    handler: functions/auth/register/index.handler
     events:
       - httpApi:
-          path: /
+          path: /auth/register
+          method: post
+  login:
+    handler: functions/auth/login/index.handler
+    events:
+      - httpApi:
+          path: /auth/login
+          method: post
+
+  # Posts
+  getPosts:
+    handler: functions/posts/getPosts/index.handler
+    events:
+      - httpApi:
+          path: /posts
           method: get
+  getPostById:
+    handler: functions/posts/getPostById/index.handler
+    events:
+      - httpApi:
+          path: /posts/{postId}
+          method: get
+  createPost:
+    handler: functions/posts/createPost/index.handler
+    events:
+      - httpApi:
+          path: /posts
+          method: post
+  updatePost:
+    handler: functions/posts/updatePost/index.handler
+    events:
+      - httpApi:
+          path: /posts/{postId}
+          method: put
+  deletePost:
+    handler: functions/posts/deletePost/index.handler
+    events:
+      - httpApi:
+          path: /posts/{postId}
+          method: delete
+
+  # Comments (VG)
+  getComments:
+    handler: functions/comments/getComments/index.handler
+    events:
+      - httpApi:
+          path: /posts/{postId}/comments
+          method: get
+  createComment:
+    handler: functions/comments/createComment/index.handler
+    events:
+      - httpApi:
+          path: /posts/{postId}/comments
+          method: post
