@@ -42,3 +42,7 @@ export const updatePost = async (id, { title, content }) => {
     updatedAt: new Date().toISOString(),
   });
 };
+
+export const deletePost = async (id) => {
+  await postRepository.deletePost(id);
+};
