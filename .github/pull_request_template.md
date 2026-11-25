@@ -82,7 +82,7 @@ SHUI-___ · Closes #___
 
 ## Checklist
 
-- [ ] My commits look like `feat [SHUI-013] Add create team endpoint`
+- [ ] My commits look like `feat [SHUI-011] Add create post endpoint`
 - [ ] No JWT secret, token or config.yml in this PR or in screenshots
 - [ ] The handler only does HTTP – logic in services/, DB in repositories/
 - [ ] I tested every row in my ticket's test table
