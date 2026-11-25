@@ -34,3 +34,11 @@ export const getPost = async (id) => {
 
   return post;
 };
+
+export const updatePost = async (id, { title, content }) => {
+  return await postRepository.updatePost(id, {
+    title,
+    content,
+    updatedAt: new Date().toISOString(),
+  });
+};
