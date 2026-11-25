@@ -1,3 +1,4 @@
+import { createError } from "@middy/util";
 import * as postRepository from "../repositories/postRepository.mjs";
 
 export const createPost = async (user, { title, content }) => {
@@ -22,4 +23,14 @@ export const listPosts = async (username) => {
   }
 
   return await postRepository.getAllPosts();
+};
+
+export const getPost = async (id) => {
+  const post = await postRepository.getPostById(id);
+
+  if (!post) {
+    throw createError(404, "Post not found");
+  }
+
+  return post;
 };
