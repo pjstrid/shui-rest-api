@@ -15,3 +15,11 @@ export const createPost = async (user, { title, content }) => {
 
   return await postRepository.createPost(post);
 };
+
+export const listPosts = async (username) => {
+  if (username) {
+    return await postRepository.getPostsByUsername(username);
+  }
+
+  return await postRepository.getAllPosts();
+};
