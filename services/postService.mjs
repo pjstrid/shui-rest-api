@@ -1,13 +1,16 @@
 import { createError } from "@middy/util";
 import * as postRepository from "../repositories/postRepository.mjs";
+import { generateGuestName } from "../utils/guestName.mjs";
 
+// No user (no token) → guest post with a random name
 export const createPost = async (user, { title, content }) => {
   const now = new Date().toISOString();
+  const isGuest = !user;
 
   const post = {
     id: crypto.randomUUID(),
-    username: user.username,
-    isGuest: false,
+    username: isGuest ? generateGuestName() : user.username,
+    isGuest,
     title,
     content,
     createdAt: now,
