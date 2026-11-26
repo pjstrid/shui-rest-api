@@ -6,7 +6,8 @@ export const authorize = () => ({
     const { postId } = handler.event.pathParameters;
     const post = await getPost(postId);
 
-    if (post.username !== handler.event.user.username) {
+    // Guest posts can never be changed, even if a user has the same name
+    if (post.isGuest || post.username !== handler.event.user.username) {
       throw createError(403, "You can only change your own posts");
     }
 
