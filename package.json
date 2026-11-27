@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "smoke": "node scripts/smoke-test.mjs"
+  },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1176.0",
     "@aws-sdk/lib-dynamodb": "^3.1176.0",
