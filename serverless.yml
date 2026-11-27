@@ -16,13 +16,13 @@ provider:
 
 functions:
   # Auth
-  register:
+  register: # Public
     handler: functions/auth/register/index.handler
     events:
       - httpApi:
           path: /auth/register
           method: POST
-  login:
+  login: # Public
     handler: functions/auth/login/index.handler
     events:
       - httpApi:
@@ -30,31 +30,31 @@ functions:
           method: POST
 
   # Posts
-  getPosts:
+  getPosts: # Public
     handler: functions/posts/getPosts/index.handler
     events:
       - httpApi:
           path: /posts
           method: GET
-  getPostById:
+  getPostById: # Public
     handler: functions/posts/getPostById/index.handler
     events:
       - httpApi:
           path: /posts/{postId}
           method: GET
-  createPost:
+  createPost: # Logged in or guest (no token → guest post, invalid token → 401)
     handler: functions/posts/createPost/index.handler
     events:
       - httpApi:
           path: /posts
           method: POST
-  updatePost:
+  updatePost: # Logged-in owner only
     handler: functions/posts/updatePost/index.handler
     events:
       - httpApi:
           path: /posts/{postId}
           method: PUT
-  deletePost:
+  deletePost: # Logged-in owner only
     handler: functions/posts/deletePost/index.handler
     events:
       - httpApi:
@@ -62,13 +62,13 @@ functions:
           method: DELETE
 
   # Comments (VG)
-  getComments:
+  getComments: # Public
     handler: functions/comments/getComments/index.handler
     events:
       - httpApi:
           path: /posts/{postId}/comments
           method: GET
-  createComment:
+  createComment: # Logged in
     handler: functions/comments/createComment/index.handler
     events:
       - httpApi:

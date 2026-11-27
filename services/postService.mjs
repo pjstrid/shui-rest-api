@@ -1,13 +1,17 @@
 import { createError } from "@middy/util";
 import * as postRepository from "../repositories/postRepository.mjs";
+import * as commentRepository from "../repositories/commentRepository.mjs";
+import { generateGuestName } from "../utils/guestName.mjs";
 
+// No user (no token) → guest post with a random name
 export const createPost = async (user, { title, content }) => {
   const now = new Date().toISOString();
+  const isGuest = !user;
 
   const post = {
     id: crypto.randomUUID(),
-    username: user.username,
-    isGuest: false,
+    username: isGuest ? generateGuestName() : user.username,
+    isGuest,
     title,
     content,
     createdAt: now,
@@ -43,6 +47,8 @@ export const updatePost = async (id, { title, content }) => {
   });
 };
 
+// The post's comments are deleted first, so no comments are left without a post
 export const deletePost = async (id) => {
+  await commentRepository.deleteCommentsByPost(id);
   await postRepository.deletePost(id);
 };
