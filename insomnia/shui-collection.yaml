@@ -1,0 +1,1209 @@
+_type: export
+__export_format: 4
+__export_date: "2026-11-27T09:58:37.820Z"
+__export_source: "insomnia.desktop.app:v13.5.0"
+resources:
+  - _id: "wrk_shui"
+    _type: "workspace"
+    parentId: null
+    name: "Shui"
+    description: "Shui REST API – every test row from SHUI-004 to SHUI-022"
+    scope: "collection"
+  - _id: "env_shui_base"
+    _type: "environment"
+    parentId: "wrk_shui"
+    name: "Base Environment"
+    data:
+      base_url: "https://your-api-id.execute-api.eu-north-1.amazonaws.com"
+      token: ""
+      other_token: ""
+      guest_name_token: ""
+      post_id: ""
+      guest_post_id: ""
+      guest_name: ""
+  - _id: "jar_shui"
+    _type: "cookie_jar"
+    parentId: "wrk_shui"
+    name: "Default Jar"
+    cookies: []
+  - _id: "fld_auth"
+    _type: "request_group"
+    parentId: "wrk_shui"
+    name: "Auth"
+    description: ""
+    metaSortKey: 1
+  - _id: "req_auth_01"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "01 Register – works (201)"
+    description: "Expected 201. The response must not contain password."
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "jonathan",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 1
+  - _id: "req_auth_02"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "02 Register – same username again (409)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "jonathan",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 409", () => {
+        insomnia.expect(insomnia.response.code).to.eql(409);
+      });
+    metaSortKey: 2
+  - _id: "req_auth_03"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "03 Register – other user (201)"
+    description: "Second user, used for the 403 tests."
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "otheruser",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 3
+  - _id: "req_auth_04"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "04 Register – username missing (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 4
+  - _id: "req_auth_05"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "05 Register – password too weak (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "weakuser",
+          "password": "password"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 5
+  - _id: "req_auth_06"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "06 Register – broken JSON (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "application/json"
+      text: "{ \"username\": \"jonathan\", "
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 6
+  - _id: "req_auth_07"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "07 Register – no body (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body: {}
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 7
+  - _id: "req_auth_08"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "08 Register – wrong content type (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "text/plain"
+      text: "username=jonathan"
+    headers:
+      - name: "Content-Type"
+        value: "text/plain"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 8
+  - _id: "req_auth_09"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "09 Login – works (200)"
+    description: "Copy token from the response into the environment variable token."
+    method: "POST"
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "jonathan",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 9
+  - _id: "req_auth_10"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "10 Login – other user (200)"
+    description: "Copy token from the response into the environment variable other_token."
+    method: "POST"
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "otheruser",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 10
+  - _id: "req_auth_11"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "11 Login – password missing (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "jonathan"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 11
+  - _id: "req_auth_12"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "12 Login – wrong password (401)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "jonathan",
+          "password": "WrongPassword1!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 401", () => {
+        insomnia.expect(insomnia.response.code).to.eql(401);
+      });
+    metaSortKey: 12
+  - _id: "req_auth_13"
+    _type: "request"
+    parentId: "fld_auth"
+    name: "13 Login – user doesn't exist (401)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "nobody",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 401", () => {
+        insomnia.expect(insomnia.response.code).to.eql(401);
+      });
+    metaSortKey: 13
+  - _id: "fld_posts"
+    _type: "request_group"
+    parentId: "wrk_shui"
+    name: "Posts"
+    description: ""
+    metaSortKey: 2
+  - _id: "req_posts_01"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "01 Create post – with token (201)"
+    description: "Expected isGuest: false. Copy post.id into post_id."
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "My first post",
+          "content": "Hello from jonathan"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 1
+  - _id: "req_posts_02"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "02 Create post – guest, no token (201)"
+    description: "Expected isGuest: true. Copy post.id into guest_post_id and post.username into guest_name."
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Guest post",
+          "content": "Hello from a guest"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 2
+  - _id: "req_posts_03"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "03 Create post – invalid token (401)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer made-up-token"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 401", () => {
+        insomnia.expect(insomnia.response.code).to.eql(401);
+      });
+    metaSortKey: 3
+  - _id: "req_posts_04"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "04 Create post – Bearer with no token (401)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 401", () => {
+        insomnia.expect(insomnia.response.code).to.eql(401);
+      });
+    metaSortKey: 4
+  - _id: "req_posts_05"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "05 Create post – title missing (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 5
+  - _id: "req_posts_06"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "06 Create post – empty content (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "   "
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 6
+  - _id: "req_posts_07"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "07 Create post – username in body (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "Content",
+          "username": "someoneelse"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 7
+  - _id: "req_posts_08"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "08 Create post – guest, title missing (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 8
+  - _id: "req_posts_09"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "09 Get posts – all, newest first (200)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 9
+  - _id: "req_posts_10"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "10 Get posts – ?username=jonathan (200)"
+    description: "Only jonathan's posts."
+    method: "GET"
+    url: "{{ _.base_url }}/posts?username=jonathan"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 10
+  - _id: "req_posts_11"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "11 Get posts – ?username=nobody (200 [])"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts?username=nobody"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 11
+  - _id: "req_posts_12"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "12 Get posts – ?username= empty (400)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts?username="
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 12
+  - _id: "req_posts_13"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "13 Get posts – ?foo=bar (400)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts?foo=bar"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 13
+  - _id: "req_posts_14"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "14 Get posts – guest name (200)"
+    description: "Expected the guest post."
+    method: "GET"
+    url: "{{ _.base_url }}/posts?username={{ _.guest_name }}"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 14
+  - _id: "req_posts_15"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "15 Get post by id – works (200)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 15
+  - _id: "req_posts_16"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "16 Get post by id – guest post (200)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/{{ _.guest_post_id }}"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 16
+  - _id: "req_posts_17"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "17 Get post by id – unknown id (404)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/00000000-0000-0000-0000-000000000000"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 404", () => {
+        insomnia.expect(insomnia.response.code).to.eql(404);
+      });
+    metaSortKey: 17
+  - _id: "req_posts_18"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "18 Update post – owner (200)"
+    description: "Expected a new updatedAt and the same createdAt."
+    method: "PUT"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Updated title",
+          "content": "Updated content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 18
+  - _id: "req_posts_19"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "19 Update post – no token (401)"
+    description: ""
+    method: "PUT"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 401", () => {
+        insomnia.expect(insomnia.response.code).to.eql(401);
+      });
+    metaSortKey: 19
+  - _id: "req_posts_20"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "20 Update post – another user's token (403)"
+    description: ""
+    method: "PUT"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.other_token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 403", () => {
+        insomnia.expect(insomnia.response.code).to.eql(403);
+      });
+    metaSortKey: 20
+  - _id: "req_posts_21"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "21 Update post – unknown id (404)"
+    description: ""
+    method: "PUT"
+    url: "{{ _.base_url }}/posts/00000000-0000-0000-0000-000000000000"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 404", () => {
+        insomnia.expect(insomnia.response.code).to.eql(404);
+      });
+    metaSortKey: 21
+  - _id: "req_posts_22"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "22 Update post – content missing (400)"
+    description: ""
+    method: "PUT"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 22
+  - _id: "req_posts_23"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "23 Guest owner – register user with guest name (201)"
+    description: "Registers a user with the same name as the guest post."
+    method: "POST"
+    url: "{{ _.base_url }}/auth/register"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "{{ _.guest_name }}",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 23
+  - _id: "req_posts_24"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "24 Guest owner – login (200)"
+    description: "Copy token into guest_name_token."
+    method: "POST"
+    url: "{{ _.base_url }}/auth/login"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "username": "{{ _.guest_name }}",
+          "password": "Password123!"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 24
+  - _id: "req_posts_25"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "25 Guest owner – update guest post (403)"
+    description: ""
+    method: "PUT"
+    url: "{{ _.base_url }}/posts/{{ _.guest_post_id }}"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Title",
+          "content": "Content"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.guest_name_token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 403", () => {
+        insomnia.expect(insomnia.response.code).to.eql(403);
+      });
+    metaSortKey: 25
+  - _id: "req_posts_26"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "26 Guest owner – delete guest post (403)"
+    description: ""
+    method: "DELETE"
+    url: "{{ _.base_url }}/posts/{{ _.guest_post_id }}"
+    body: {}
+    headers:
+      - name: "Authorization"
+        value: "Bearer {{ _.guest_name_token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 403", () => {
+        insomnia.expect(insomnia.response.code).to.eql(403);
+      });
+    metaSortKey: 26
+  - _id: "req_posts_27"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "27 Delete post – no token (401)"
+    description: ""
+    method: "DELETE"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 401", () => {
+        insomnia.expect(insomnia.response.code).to.eql(401);
+      });
+    metaSortKey: 27
+  - _id: "req_posts_28"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "28 Delete post – another user's token (403)"
+    description: ""
+    method: "DELETE"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body: {}
+    headers:
+      - name: "Authorization"
+        value: "Bearer {{ _.other_token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 403", () => {
+        insomnia.expect(insomnia.response.code).to.eql(403);
+      });
+    metaSortKey: 28
+  - _id: "req_posts_29"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "29 Delete post – unknown id (404)"
+    description: ""
+    method: "DELETE"
+    url: "{{ _.base_url }}/posts/00000000-0000-0000-0000-000000000000"
+    body: {}
+    headers:
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 404", () => {
+        insomnia.expect(insomnia.response.code).to.eql(404);
+      });
+    metaSortKey: 29
+  - _id: "req_posts_30"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "30 Delete post – owner (204)"
+    description: ""
+    method: "DELETE"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body: {}
+    headers:
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 204", () => {
+        insomnia.expect(insomnia.response.code).to.eql(204);
+      });
+    metaSortKey: 30
+  - _id: "req_posts_31"
+    _type: "request"
+    parentId: "fld_posts"
+    name: "31 Delete post – then GET same id (404)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 404", () => {
+        insomnia.expect(insomnia.response.code).to.eql(404);
+      });
+    metaSortKey: 31
+  - _id: "fld_comments"
+    _type: "request_group"
+    parentId: "wrk_shui"
+    name: "Comments"
+    description: ""
+    metaSortKey: 3
+  - _id: "req_comments_01"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "01 Setup – create post for comments (201)"
+    description: "Copy post.id into post_id again (the old one was deleted)."
+    method: "POST"
+    url: "{{ _.base_url }}/posts"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "title": "Post with comments",
+          "content": "Comment on this"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 1
+  - _id: "req_comments_02"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "02 Get comments – no comments (200 [])"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}/comments"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 2
+  - _id: "req_comments_03"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "03 Create comment – works (201)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}/comments"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "First comment"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 3
+  - _id: "req_comments_04"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "04 Create comment – second comment (201)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}/comments"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "Second comment"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.other_token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 4
+  - _id: "req_comments_05"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "05 Get comments – oldest first (200)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}/comments"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 5
+  - _id: "req_comments_06"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "06 Create comment – on guest post (201)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts/{{ _.guest_post_id }}/comments"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "Comment on a guest post"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 201", () => {
+        insomnia.expect(insomnia.response.code).to.eql(201);
+      });
+    metaSortKey: 6
+  - _id: "req_comments_07"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "07 Get comments – guest post (200)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/{{ _.guest_post_id }}/comments"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 200", () => {
+        insomnia.expect(insomnia.response.code).to.eql(200);
+      });
+    metaSortKey: 7
+  - _id: "req_comments_08"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "08 Create comment – no token (401)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}/comments"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "No token"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 401", () => {
+        insomnia.expect(insomnia.response.code).to.eql(401);
+      });
+    metaSortKey: 8
+  - _id: "req_comments_09"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "09 Create comment – empty content (400)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}/comments"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "   "
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 400", () => {
+        insomnia.expect(insomnia.response.code).to.eql(400);
+      });
+    metaSortKey: 9
+  - _id: "req_comments_10"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "10 Create comment – unknown post (404)"
+    description: ""
+    method: "POST"
+    url: "{{ _.base_url }}/posts/00000000-0000-0000-0000-000000000000/comments"
+    body:
+      mimeType: "application/json"
+      text: |-
+        {
+          "content": "Unknown post"
+        }
+    headers:
+      - name: "Content-Type"
+        value: "application/json"
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 404", () => {
+        insomnia.expect(insomnia.response.code).to.eql(404);
+      });
+    metaSortKey: 10
+  - _id: "req_comments_11"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "11 Get comments – unknown post (404)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/00000000-0000-0000-0000-000000000000/comments"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 404", () => {
+        insomnia.expect(insomnia.response.code).to.eql(404);
+      });
+    metaSortKey: 11
+  - _id: "req_comments_12"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "12 Delete post with comments (204)"
+    description: "Deletes the post and both comments."
+    method: "DELETE"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}"
+    body: {}
+    headers:
+      - name: "Authorization"
+        value: "Bearer {{ _.token }}"
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 204", () => {
+        insomnia.expect(insomnia.response.code).to.eql(204);
+      });
+    metaSortKey: 12
+  - _id: "req_comments_13"
+    _type: "request"
+    parentId: "fld_comments"
+    name: "13 Get comments – after delete (404)"
+    description: ""
+    method: "GET"
+    url: "{{ _.base_url }}/posts/{{ _.post_id }}/comments"
+    body: {}
+    headers: []
+    authentication: {}
+    afterResponseScript: |-
+      insomnia.test("Status is 404", () => {
+        insomnia.expect(insomnia.response.code).to.eql(404);
+      });
+    metaSortKey: 13
